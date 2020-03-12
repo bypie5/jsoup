@@ -81,4 +81,94 @@ public class TagTest {
         assertTrue(Tag.isKnownTag("div"));
         assertFalse(Tag.isKnownTag("explain"));
     }
+
+    @Test public void tagsOfSameTypeHashCodeTest() {
+        Tag div = Tag.valueOf("div");
+        Tag div2 = Tag.valueOf("div");
+
+        assertEquals(1428650543, div.hashCode());
+        assertEquals(1428650543, div2.hashCode());
+    }
+
+    @Test public void emptyTagHashTest() {
+        Tag area = Tag.valueOf("area");
+
+        assertEquals(247201364, area.hashCode());
+    }
+
+    @Test public void formSubmitHashTest() {
+        Tag area = Tag.valueOf("input");
+
+        assertEquals(-677361513, area.hashCode());
+    }
+
+    @Test public void formListedHashTest() {
+        Tag output = Tag.valueOf("output");
+
+        assertEquals(470938622, output.hashCode());
+    }
+
+    @Test public void keepWhiteSpaceHashTest() {
+        Tag pre = Tag.valueOf("pre");
+
+        assertEquals(391634687, pre.hashCode());
+    }
+
+    @Test public void selfClosingHashTest() {
+        Tag br = Tag.valueOf("<foo />");
+        br.setSelfClosing();
+
+        assertEquals(-916668775, br.hashCode());
+    }
+
+    @Test public void differentCaseSameHashCodeTest() {
+        Tag bigP = Tag.valueOf("P", ParseSettings.htmlDefault);
+        Tag littleP = Tag.valueOf("p", ParseSettings.htmlDefault);
+
+        assertEquals(-1486234415, bigP.hashCode());
+        assertEquals(-1486234415, littleP.hashCode());
+        assertTrue(littleP.hashCode() == bigP.hashCode());
+    }
+
+    @Test public void tagsOfSameTypeEqualsTest() {
+        Tag div = Tag.valueOf("div");
+        Tag div2 = Tag.valueOf("div");
+
+        assertSame(div, div2);
+    }
+
+    @Test public void emptyTagEqualsTest() {
+        Tag area = Tag.valueOf("area");
+        Tag area2 = Tag.valueOf("area");
+
+        assertSame(area, area2);
+    }
+
+    @Test public void formSubmitEqualsTest() {
+        Tag submit = Tag.valueOf("input");
+        Tag submit2 = Tag.valueOf("input");
+
+        assertSame(submit, submit2);
+    }
+
+    @Test public void formListedEqualsTest() {
+        Tag output = Tag.valueOf("output");
+        Tag output2 = Tag.valueOf("output");
+
+        assertSame(output, output2);
+    }
+
+    @Test public void keepWhiteEqualsTest() {
+        Tag pre = Tag.valueOf("pre");
+        Tag pre2 = Tag.valueOf("pre");
+
+        assertSame(pre, pre2);
+    }
+
+    @Test public void unknownTagEqualityTest() {
+        Tag foo = Tag.valueOf("foo");
+        Tag foo2 = Tag.valueOf("foo");
+
+        assertSame(foo, foo2);
+    }
 }

@@ -13,6 +13,10 @@ import org.junit.jupiter.api.Test;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 
 import static org.jsoup.parser.ParseSettings.preserveCase;
@@ -24,6 +28,56 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Jonathan Hedley, jonathan@hedley.net
  */
 public class HtmlParserTest {
+
+    /*
+        Input files are from web-platform-tests
+    */
+
+    static String readFile(String path, Charset encoding)
+    {
+        try {
+            byte[] encoded = Files.readAllBytes(Paths.get(path));
+            return new String(encoded, encoding);
+        } catch (Exception e) {
+            return e.toString();
+        }
+    }
+
+    @Test public void foreignContent001Test() {
+        String path = "./src/test/resources/htmltests/foreign_content_001.html";
+        String html = readFile(path, StandardCharsets.US_ASCII);
+
+        Parser parser = Parser.htmlParser().setTrackErrors(10);
+        Document doc = parser.parseInput(html, "");
+
+        Element svg = doc.body().child(1).child(0);
+        assertEquals("svg", svg.tagName());
+        assertEquals("rect", svg.child(0).tagName());
+        assertEquals(0, parser.getErrors().size());
+    }
+
+    @Test public void mathParseTest() {
+        String path = "./src/test/resources/htmltests/foreign_content_004.html";
+        String html = readFile(path, StandardCharsets.US_ASCII);
+
+        Parser parser = Parser.htmlParser().setTrackErrors(10);
+        Document doc = parser.parseInput(html, "");
+
+        assertEquals(doc.getElementById("m1"), doc.getElementsByTag("math").first());
+        assertEquals(doc.getElementById("d1").children().get(0).nodeName(),"math");
+        assertEquals(doc.getElementById("d3").text(),"\u27E8\u27E9");
+    }
+
+    @Ignore
+    @Test public void quotesInMetaTest() {
+        String path = "./src/test/resources/htmltests/quotes-in-meta.html";
+        String html = readFile(path, StandardCharsets.US_ASCII);
+
+        Parser parser = Parser.htmlParser().setTrackErrors(10);
+        Document doc = parser.parseInput(html, "");
+
+        assertEquals(doc.charset().name(), "windows-1250");
+    }
 
     @Test public void parsesSimpleDocument() {
         String html = "<html><head><title>First!</title></head><body><p>First post! <img src=\"foo.png\" /></p></body></html>";
@@ -968,6 +1022,7 @@ public class HtmlParserTest {
             StringUtil.normaliseWhitespace(doc.outerHtml()));
     }
 
+    @Ignore // System.currentTimeMillis() is not accurate when computing coverage
     @Test public void handlesManyChildren() {
         // Arrange
         StringBuilder longBody = new StringBuilder(500000);
@@ -982,6 +1037,30 @@ public class HtmlParserTest {
         // Assert
         assertEquals(50000, doc.body().childNodeSize());
         assertTrue(System.currentTimeMillis() - start < 1000);
+    }
+
+    @Ignore // System.currentTimeMillis() is not accurate when computing coverage
+    @Test public void handlesDeepStack() {
+        // inspired by http://sv.stargate.wikia.com/wiki/M2J and https://github.com/jhy/jsoup/issues/955
+        // I didn't put it in the integration tests, because explorer and intellij kept dieing trying to preview/index it
+
+        // Arrange
+        StringBuilder longBody = new StringBuilder(500000);
+        for (int i = 0; i < 25000; i++) {
+            longBody.append(i).append("<dl><dd>");
+        }
+        for (int i = 0; i < 25000; i++) {
+            longBody.append(i).append("</dd></dl>");
+        }
+
+        // Act
+        long start = System.currentTimeMillis();
+        Document doc = Parser.parseBodyFragment(longBody.toString(), "");
+
+        // Assert
+        assertEquals(2, doc.body().childNodeSize());
+        assertEquals(25000, doc.select("dd").size());
+        assertTrue(System.currentTimeMillis() - start < 2000);
     }
 
     @Test
