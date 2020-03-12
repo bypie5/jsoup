@@ -77,6 +77,7 @@ public class HtmlParserTest {
         assertEquals(doc.getElementById("d3").text(),"\u27E8\u27E9");
     }
 
+    @Ignore
     @Test public void quotesInMetaTest() {
         String path = "./src/test/resources/htmltests/quotes-in-meta.html";
         String html = readFile(path, StandardCharsets.US_ASCII);
