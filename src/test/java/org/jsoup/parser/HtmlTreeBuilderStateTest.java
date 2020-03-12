@@ -13,13 +13,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-<<<<<<< HEAD
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-=======
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
->>>>>>> testing-verification
 
 public class HtmlTreeBuilderStateTest {
     static List<Object[]> findArrays() {
@@ -47,7 +42,6 @@ public class HtmlTreeBuilderStateTest {
         }
     }
 
-<<<<<<< HEAD
     @Test
     public void ensureArraysAreSorted() {
         List<Object[]> constants = findArrays();
@@ -55,7 +49,6 @@ public class HtmlTreeBuilderStateTest {
         assertEquals(38, constants.size());
     }
 
-=======
     /*
         These tests reach previously untested (or lightly) states in HTMLTreeBuilderState.
         These tests are important because they check if errors are being logged in appropriate
@@ -162,5 +155,4 @@ public class HtmlTreeBuilderStateTest {
         String expectedError = "Unexpected token [Doctype] when in state [AfterFrameset]";
         assertEquals(expectedError, parser.getErrors().get(0).getErrorMessage());
     }
->>>>>>> testing-verification
 }

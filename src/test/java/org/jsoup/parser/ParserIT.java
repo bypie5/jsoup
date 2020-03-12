@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import org.junit.jupiter.api.Ignore;
 
 
 /**
@@ -16,7 +15,6 @@ import org.junit.jupiter.api.Ignore;
 public class ParserIT {
 
     @Test
-    @Ignore
     public void testIssue1251() {
         // https://github.com/jhy/jsoup/issues/1251
         /*StringBuilder str = new StringBuilder("<a href=\"\"ca");
