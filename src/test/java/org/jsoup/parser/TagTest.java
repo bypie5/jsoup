@@ -128,4 +128,46 @@ public class TagTest {
         assertEquals(-1486234415, littleP.hashCode());
         assertTrue(littleP.hashCode() == bigP.hashCode());
     }
+
+    @Test public void tagsOfSameTypeEqualsTest() {
+        Tag div = Tag.valueOf("div");
+        Tag div2 = Tag.valueOf("div");
+
+        assertSame(div, div2);
+    }
+
+    @Test public void emptyTagEqualsTest() {
+        Tag area = Tag.valueOf("area");
+        Tag area2 = Tag.valueOf("area");
+
+        assertSame(area, area2);
+    }
+
+    @Test public void formSubmitEqualsTest() {
+        Tag submit = Tag.valueOf("input");
+        Tag submit2 = Tag.valueOf("input");
+
+        assertSame(submit, submit2);
+    }
+
+    @Test public void formListedEqualsTest() {
+        Tag output = Tag.valueOf("output");
+        Tag output2 = Tag.valueOf("output");
+
+        assertSame(output, output2);
+    }
+
+    @Test public void keepWhiteEqualsTest() {
+        Tag pre = Tag.valueOf("pre");
+        Tag pre2 = Tag.valueOf("pre");
+
+        assertSame(pre, pre2);
+    }
+
+    @Test public void unknownTagEqualityTest() {
+        Tag foo = Tag.valueOf("foo");
+        Tag foo2 = Tag.valueOf("foo");
+
+        assertSame(foo, foo2);
+    }
 }
