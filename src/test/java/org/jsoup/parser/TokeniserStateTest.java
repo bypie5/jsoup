@@ -277,4 +277,87 @@ public class TokeniserStateTest {
         doc = Jsoup.parse("<p foo=");
         assertEquals("<p foo></p>", doc.body().html());
     }
+
+    /*
+        The following tests enter states where coverage is low and error states
+        are unverified by tests
+    */
+
+
+    @Test
+    public void commentStartNullChar() {
+        String html = "<!--\u0000";
+
+        ParseErrorList errorList = ParseErrorList.tracking(10);
+        Parser.parseFragment(html, null, "", errorList);
+
+        String msg = "Unexpected character '\uFFFF' in input state [CommentStart]";
+        assertEquals(msg, errorList.get(0).getErrorMessage());
+    }
+
+    @Test
+    public void commentStartCarrot() {
+        String html = "<!-->";
+
+        ParseErrorList errorList = ParseErrorList.tracking(10);
+        Parser.parseFragment(html, null, "", errorList);
+
+        String msg = "Unexpected character '\uFFFF' in input state [CommentStart]";
+        assertEquals(msg, errorList.get(0).getErrorMessage());
+    }
+
+    @Test
+    public void commentStartEOR() {
+        String html = "<!--";
+
+        ParseErrorList errorList = ParseErrorList.tracking(10);
+        Parser.parseFragment(html, null, "", errorList);
+
+        String msg = "Unexpectedly reached end of file (EOF) in input state [CommentStart]";
+        assertEquals(msg, errorList.get(0).getErrorMessage());
+    }
+
+    @Test
+    public void nullCharBeforeDoctypeName() {
+        String html = "<!DOCTYPE \u0000 html >";
+
+        ParseErrorList errorList = ParseErrorList.tracking(10);
+        Parser.parseFragment(html, null, "", errorList);
+
+        String msg = "Unexpected character ' ' in input state [BeforeDoctypeName]";
+        assertEquals(msg, errorList.get(0).getErrorMessage());
+    }
+
+    @Test
+    public void EOFBeforeDoctypeName() {
+        String html = "<!DOCTYPE ";
+
+        ParseErrorList errorList = ParseErrorList.tracking(10);
+        Parser.parseFragment(html, null, "", errorList);
+
+        String msg = "Unexpectedly reached end of file (EOF) in input state [BeforeDoctypeName]";
+        assertEquals(msg, errorList.get(0).getErrorMessage());
+    }
+
+    @Test
+    public void doctypeNameContainsNullChar() {
+        String html = "<!DOCTYPE  h\u0000ml >";
+
+        ParseErrorList errorList = ParseErrorList.tracking(10);
+        Parser.parseFragment(html, null, "", errorList);
+
+        String msg = "Unexpected character 'm' in input state [DoctypeName]";
+        assertEquals(msg, errorList.get(0).getErrorMessage());
+    }
+
+    @Test
+    public void doctypeNameContainsEOF() {
+        String html = "<!DOCTYPE  h";
+
+        ParseErrorList errorList = ParseErrorList.tracking(10);
+        Parser.parseFragment(html, null, "", errorList);
+
+        String msg = "Unexpectedly reached end of file (EOF) in input state [DoctypeName]";
+        assertEquals(msg, errorList.get(0).getErrorMessage());
+    }
 }
